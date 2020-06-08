@@ -1,0 +1,25 @@
+{
+  "name": "cn.com.ths.device.manager",
+  "version": "1.0.0",
+  "description": "思路移动管理平台设备管理插件",
+  "cordova": {
+    "id": "cn.com.ths.device.manager",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/THS-FE/thsdevicemanager.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "liuyx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/THS-FE/thsdevicemanager/issues"
+  },
+  "homepage": "https://github.com/THS-FE/thsdevicemanager#readme"
+}

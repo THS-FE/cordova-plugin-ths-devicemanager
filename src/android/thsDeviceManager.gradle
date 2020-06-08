@@ -1,0 +1,67 @@
+//引入aar文件
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+            url 'http://maven.aliyun.com/nexus/content/repositories/releases/'
+    }
+    // dependencies {
+    // 添加emas-services插件
+    //         classpath 'com.aliyun.ams:emas-services:1.0.1'
+    //     }
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+ext.versionName = '2.5.6'
+ext.coreKtxVersion = '1.2.0'
+ext.kotlinVersion = '1.3.71'
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(name: "devicem", ext: 'aar')
+    implementation(name: "dpmapp", ext: 'aar')
+    implementation(name: "patternlocker", ext: 'aar')
+    // devicem
+     implementation 'androidx.appcompat:appcompat:1.0.0'
+     //dpmapp
+      implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    // 消息推送相关开始
+    compile 'com.aliyun.ams:alicloud-android-push:3.1.9@aar'
+    compile 'com.aliyun.ams:alicloud-android-utils:1.1.3'
+    compile 'com.aliyun.ams:alicloud-android-beacon:1.0.2'
+    compile 'com.aliyun.ams:alicloud-android-ut:5.4.3'
+    // 或
+    compile 'com.aliyun.ams:alicloud-android-push:3.1.9'
+
+
+    compile 'com.aliyun.ams:alicloud-android-third-push:3.0.10@aar'
+    // 华为厂商通道
+    compile 'com.aliyun.ams:huawei-push:2.6.3.305'
+    compile 'com.aliyun.ams:huawei-push-base:2.6.3.305'
+    //消息推送相关结束
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+    //手势密码patternlocker
+    implementation "com.github.ihsg:PatternLocker:$versionName"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    //implementation "androidx.appcompat:appcompat:$rootProject.ext.appcompatVersion"
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+  
+}
+//ext.postBuildExtras会在最后执行，覆盖Android模块的gradle配置
+ext.postBuildExtras = {
+  android {
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+      multiDexEnabled true
+    }
+    compileOptions {
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
+    }
+  }
+}
+
