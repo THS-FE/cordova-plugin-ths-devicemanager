@@ -31,6 +31,20 @@ exports.setUser = function (user, success, error) {
     exec(success, error, 'ThsDeviceManager', 'setUser', [user]);
 };
 
+/**
+ * 上传设备信息
+ */
+exports.upLoadDeviceInfo = function (success, error) {
+    exec(success, error, 'ThsDeviceManager', 'upLoadDeviceInfo', []);
+};
+
+/**
+ * 更新设备激活状态信息
+ */
+exports.updateDeviceActiveStatus = function (success, error) {
+    exec(success, error, 'ThsDeviceManager', 'updateDeviceActiveStatus', []);
+};
+
 
 /**
  * 启动服务

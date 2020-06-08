@@ -26,6 +26,7 @@ import cn.com.ths.trustmobi.safe.utils.encrypt.AESUtils;
 import cn.com.ths.trustmobi.safe.utils.file.FileUtil;
 import cn.com.ths.trustmobi.safe.utils.file.ValidateSha1sum;
 import cn.com.ths.trustmobi.safe.utils.http.ThsClient;
+import cn.com.ths.trustmobi.safe.utils.http.ThsHttpClient;
 import cn.com.ths.trustmobi.safe.utils.json.JsonUtils;
 import cn.com.ths.trustmobi.safe.utils.loc.LocationManager;
 import cn.com.ths.trustmobi.safe.utils.log.LogUtil;
@@ -153,8 +154,22 @@ public class ThsDeviceManager extends CordovaPlugin {
             } else {
                 callbackContext.error("Expected one non-empty string argument.");
             }
-
-
+            return true;
+        }else if(action.equals("upLoadDeviceInfo")){ // 上传设备信息
+            DeviceInfo deviceInfo = DeviceInfoUtil.getInstance(context).getDeviceTotalInfo();
+            ThsClient.getInstance().uploadDeviceInfo(AppCache.loginName, AppCache.password, deviceInfo.getUniqueID(),
+                    deviceInfo.getModel(), "Android " + deviceInfo.getSystemVersion(), deviceInfo.getPhoneNum(),
+                    "Android", deviceInfo.getManufacturer(), deviceInfo.getResolution(), deviceInfo.getScreenSize(),
+                    deviceInfo.getNetMode(), deviceInfo.getIpAddress(), deviceInfo.getWifiMacAddress(), deviceInfo.isEmulator() ? "1" : "0",
+                    deviceInfo.isRooted() ? "1" : "0", deviceInfo.isSecured() ? "1" : "0", deviceManger.getActiveState() ? "1" : "0",
+                    "0", deviceInfo.getPushDeviceId(),deviceInfo.getMnc(),deviceInfo.getMcc(),deviceInfo.getDeviceBrand());
+            // TODO 加上返回值
+            return true;
+        }else if(action.equals("updateDeviceActiveStatus")){ // 更新设备的激活状态
+             //上传设备管理器状态
+            ThsClient.getInstance().uploadEquipActive(DeviceInfoUtil.getInstance(context).getUniqueID(),DeviceManger.getInstance(context).getActiveState()==true?"1":"0");
+            // TODO 加上返回值
+            return true;
         }
         return false;
     }
