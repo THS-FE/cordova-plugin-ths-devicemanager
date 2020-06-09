@@ -162,12 +162,22 @@ public class ThsDeviceManager extends CordovaPlugin {
                     "Android", deviceInfo.getManufacturer(), deviceInfo.getResolution(), deviceInfo.getScreenSize(),
                     deviceInfo.getNetMode(), deviceInfo.getIpAddress(), deviceInfo.getWifiMacAddress(), deviceInfo.isEmulator() ? "1" : "0",
                     deviceInfo.isRooted() ? "1" : "0", deviceInfo.isSecured() ? "1" : "0", deviceManger.getActiveState() ? "1" : "0",
-                    "0", deviceInfo.getPushDeviceId(),deviceInfo.getMnc(),deviceInfo.getMcc(),deviceInfo.getDeviceBrand());
+                    "0", deviceInfo.getPushDeviceId(),deviceInfo.getMnc(),deviceInfo.getMcc(),deviceInfo.getDeviceBrand(), new ThsClient.ClientCallBack() {
+                        @Override
+                        public void getHttpRes(String response) {
+    
+                        }
+                    });
             // TODO 加上返回值
             return true;
         }else if(action.equals("updateDeviceActiveStatus")){ // 更新设备的激活状态
              //上传设备管理器状态
-            ThsClient.getInstance().uploadEquipActive(DeviceInfoUtil.getInstance(context).getUniqueID(),DeviceManger.getInstance(context).getActiveState()==true?"1":"0");
+            ThsClient.getInstance().uploadEquipActive(DeviceInfoUtil.getInstance(context).getUniqueID(),DeviceManger.getInstance(context).getActiveState()==true?"1":"0", new ThsClient.ClientCallBack() {
+                @Override
+                public void getHttpRes(String response) {
+
+                }
+            });
             // TODO 加上返回值
             return true;
         }
