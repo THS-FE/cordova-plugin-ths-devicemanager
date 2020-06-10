@@ -127,6 +127,18 @@ exports.veryPwd = function(success, error){
     exec(success, error, 'ThsDeviceManager', 'veryPwd', []);
 };
 
+// 监听验证手势密码回调
+exports.onVeryPwdInAndroidCallback = function(data) {
+   
+   cordova.fireDocumentEvent('thsDeviceManager.onVeryPwdReceiver', data);
+};
+
+// 监听设置手势密码回调
+exports.onSetPwdInAndroidCallback = function(data) {
+   
+   cordova.fireDocumentEvent('thsDeviceManager.onSetPwdReceiver', data);
+};
+
 /**
  * 二维码验证登录
  * @param loginName 登录用户
