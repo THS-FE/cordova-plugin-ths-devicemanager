@@ -1,8 +1,10 @@
 package cn.com.ths.device.manager;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 
 import com.baidu.location.BDLocation;
@@ -52,7 +54,14 @@ public class ThsDeviceManager extends CordovaPlugin {
     private final String INIT_QR_CODE_LOGIN_KEY = "QR_CODE_LOGIN";// 扫描二维码登录
     private final String INIT_LOGINNAME_KEY = "loginName";// 用户名
     private final String INIT_PASSWORD_KEY = "password";// 密码
+    public  String MY_BDR_ACTION = "cn.com.ths.mybroadcastreceiver.action";
+    public  String MY_BDR_PERMISSION = "cn.com.ths.mybroadcastreceiver.permission";
+    private MyBroadcastReceiver myBroadcastReceiver;
 
+    private  ThsDeviceManager instance;
+    public ThsDeviceManager() {
+        instance = this;
+    }
     /**
      * 初始化插件
      *
@@ -63,7 +72,12 @@ public class ThsDeviceManager extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         this.context = cordova.getActivity();
+        // 初始化设备管理对象
         deviceManger = new DeviceManger(context);
+        IntentFilter intentFilter =new IntentFilter(MY_BDR_ACTION);
+        myBroadcastReceiver = new MyBroadcastReceiver();
+        //注册receiver时，指定发送者的权限，不然外部应用可以收到receiver
+        this.context.registerReceiver(myBroadcastReceiver, intentFilter,MY_BDR_PERMISSION,null);
     }
 
     @Override
@@ -72,9 +86,9 @@ public class ThsDeviceManager extends CordovaPlugin {
             String configStr = args.getString(0);
             this.init(configStr, callbackContext);
             return true;
-        } else if(action.equals("setUser")){ // 设置用户信息
+        } else if (action.equals("setUser")) { // 设置用户信息
             String user = args.getString(0);
-            this.setUser(user,callbackContext);
+            this.setUser(user, callbackContext);
             return true;
         } else if (action.equals("startService")) { // 启动服务
             Intent i = new Intent(this.context, MsgService.class);
@@ -143,7 +157,7 @@ public class ThsDeviceManager extends CordovaPlugin {
             String loginName = args.getString(0); // 用户
             String password = args.getString(1); // 密码
             String token = args.getString(2); // 二维码token
-            if (loginName != null && loginName.length() > 0&&password != null && password.length() > 0&&token != null && token.length() > 0) {
+            if (loginName != null && loginName.length() > 0 && password != null && password.length() > 0 && token != null && token.length() > 0) {
                 ThsClient.getInstance().qrCodeLogin(loginName, password, token, new ThsClient.ClientCallBack() {
                     @Override
                     public void getHttpRes(String response) {
@@ -155,50 +169,52 @@ public class ThsDeviceManager extends CordovaPlugin {
                 callbackContext.error("Expected one non-empty string argument.");
             }
             return true;
-        }else if(action.equals("upLoadDeviceInfo")){ // 上传设备信息
+        } else if (action.equals("upLoadDeviceInfo")) { // 上传设备信息
             DeviceInfo deviceInfo = DeviceInfoUtil.getInstance(context).getDeviceTotalInfo();
             ThsClient.getInstance().uploadDeviceInfo(AppCache.loginName, AppCache.password, deviceInfo.getUniqueID(),
                     deviceInfo.getModel(), "Android " + deviceInfo.getSystemVersion(), deviceInfo.getPhoneNum(),
                     "Android", deviceInfo.getManufacturer(), deviceInfo.getResolution(), deviceInfo.getScreenSize(),
                     deviceInfo.getNetMode(), deviceInfo.getIpAddress(), deviceInfo.getWifiMacAddress(), deviceInfo.isEmulator() ? "1" : "0",
                     deviceInfo.isRooted() ? "1" : "0", deviceInfo.isSecured() ? "1" : "0", deviceManger.getActiveState() ? "1" : "0",
-                    "0", deviceInfo.getPushDeviceId(),deviceInfo.getMnc(),deviceInfo.getMcc(),deviceInfo.getDeviceBrand(), new ThsClient.ClientCallBack() {
+                    "0", deviceInfo.getPushDeviceId(), deviceInfo.getMnc(), deviceInfo.getMcc(), deviceInfo.getDeviceBrand(), new ThsClient.ClientCallBack() {
                         @Override
                         public void getHttpRes(String response) {
-    
+
+                            callbackContext.success(response);
                         }
                     });
-            // TODO 加上返回值
+
             return true;
-        }else if(action.equals("updateDeviceActiveStatus")){ // 更新设备的激活状态
-             //上传设备管理器状态
-            ThsClient.getInstance().uploadEquipActive(DeviceInfoUtil.getInstance(context).getUniqueID(),DeviceManger.getInstance(context).getActiveState()==true?"1":"0", new ThsClient.ClientCallBack() {
+        } else if (action.equals("updateDeviceActiveStatus")) { // 更新设备的激活状态
+            //上传设备管理器状态
+            ThsClient.getInstance().uploadEquipActive(DeviceInfoUtil.getInstance(context).getUniqueID(), DeviceManger.getInstance(context).getActiveState() == true ? "1" : "0", new ThsClient.ClientCallBack() {
                 @Override
                 public void getHttpRes(String response) {
-
+                    callbackContext.success(response);
                 }
             });
-            // TODO 加上返回值
+
             return true;
         }
         return false;
     }
 
     /**
-     *配置app 所需要的服务地址信息，该方法需要在app启动最开始就调用
-     * @param configStr 配置信息JSON字符串
-     * {
-     * 	"UPLOAD_DEVICE_INFO":"上传设备信息地址",
-     * 	"UPLOAD_NOTICE_RECEIVE":"上传设备远程控制质量下发状态服务地址",
-     * 	"UPLOAD_LOCATION":"上传设备位置信息地址",
-     * 	"GET_STRATEGY":"获取设备策略信息地址",
-     * 	"EQUIP_ACTIVE":"上传设备管理器激活状态地址",
-     * 	"UPLOAD_EVENT":"上传事件地址",
-     * 	"EFENCECONFIG_EVENT":"获取地理围栏信息地址",
-     * 	"VALIDATE_APP_CODE":"验证App 是否完整地址",
-     * 	"UPLOAD_EFENCETRIGGER_INFO":"触发围栏报警信息到服务器端地址",
-     * 	"QR_CODE_LOGIN":"扫描二维码登录",
-     *        }
+     * 配置app 所需要的服务地址信息，该方法需要在app启动最开始就调用
+     *
+     * @param configStr       配置信息JSON字符串
+     *                        {
+     *                        "UPLOAD_DEVICE_INFO":"上传设备信息地址",
+     *                        "UPLOAD_NOTICE_RECEIVE":"上传设备远程控制质量下发状态服务地址",
+     *                        "UPLOAD_LOCATION":"上传设备位置信息地址",
+     *                        "GET_STRATEGY":"获取设备策略信息地址",
+     *                        "EQUIP_ACTIVE":"上传设备管理器激活状态地址",
+     *                        "UPLOAD_EVENT":"上传事件地址",
+     *                        "EFENCECONFIG_EVENT":"获取地理围栏信息地址",
+     *                        "VALIDATE_APP_CODE":"验证App 是否完整地址",
+     *                        "UPLOAD_EFENCETRIGGER_INFO":"触发围栏报警信息到服务器端地址",
+     *                        "QR_CODE_LOGIN":"扫描二维码登录",
+     *                        }
      * @param callbackContext 回调
      */
     private void init(String configStr, CallbackContext callbackContext) {
@@ -245,10 +261,11 @@ public class ThsDeviceManager extends CordovaPlugin {
 
     /**
      * 设置用户信息
-     * @param userStr 用户信息JSON
+     *
+     * @param userStr         用户信息JSON
      * @param callbackContext 回调
      */
-    private void setUser(String userStr, CallbackContext callbackContext){
+    private void setUser(String userStr, CallbackContext callbackContext) {
         if (userStr != null && userStr.length() > 0) {
             try {
                 JSONObject jsonObject = new JSONObject(userStr);
@@ -261,5 +278,60 @@ public class ThsDeviceManager extends CordovaPlugin {
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if(myBroadcastReceiver!=null){
+            this.context.unregisterReceiver(myBroadcastReceiver);
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * 自定义广播接收者
+     */
+    class MyBroadcastReceiver extends BroadcastReceiver {
+        private final String  TAG = "MyBroadcastReceiver";
+        private int checkTimes = 0; // 检测测试
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(MY_BDR_ACTION)){
+                boolean  onComplete = intent.getBooleanExtra("onComplete",false);
+                String type = intent.getStringExtra("type");
+                if(type.equals("check")){
+                    if(onComplete){
+                        LogUtil.d(TAG,"手势密码识别成功");
+                        sendMsg("success","onVeryPwd");
+                    }
+                }else if(type.equals("set")){
+                    if(onComplete){
+                        checkTimes++;
+                        if(checkTimes==2){
+                            LogUtil.d(TAG,"手势密码设置成功");
+                            sendMsg("success","onSetPwd");
+                            checkTimes = 0;
+                        }
+                    }else{
+                        checkTimes = 0;
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * 发送消息到
+     * @param data
+     * @param methodStr
+     */
+    private  void sendMsg(String data,String methodStr){
+        String format = "cordova.plugins.thsdevicemanager."+methodStr+"InAndroidCallback(%s);";
+        final String js = String.format(format, "'"+data+"'");
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                instance.webView.loadUrl("javascript:" + js);
+            }
+        });
     }
 }
