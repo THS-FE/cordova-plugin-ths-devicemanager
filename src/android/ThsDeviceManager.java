@@ -326,12 +326,19 @@ public class ThsDeviceManager extends CordovaPlugin {
      */
     private  void sendMsg(String data,String methodStr){
         String format = "cordova.plugins.thsdevicemanager."+methodStr+"InAndroidCallback(%s);";
-        final String js = String.format(format, "'"+data+"'");
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                instance.webView.loadUrl("javascript:" + js);
-            }
-        });
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("res",data);
+            final String js = String.format(format, jsonObject.toString());
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    instance.webView.loadUrl("javascript:" + js);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

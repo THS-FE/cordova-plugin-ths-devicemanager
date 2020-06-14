@@ -129,13 +129,15 @@ exports.veryPwd = function(success, error){
 
 // 监听验证手势密码回调
 exports.onVeryPwdInAndroidCallback = function(data) {
-   
+   data = JSON.stringify(data);
+   data = JSON.parse(data);
    cordova.fireDocumentEvent('thsDeviceManager.onVeryPwdReceiver', data);
 };
 
 // 监听设置手势密码回调
 exports.onSetPwdInAndroidCallback = function(data) {
-   
+   data = JSON.stringify(data);
+   data = JSON.parse(data);
    cordova.fireDocumentEvent('thsDeviceManager.onSetPwdReceiver', data);
 };
 
