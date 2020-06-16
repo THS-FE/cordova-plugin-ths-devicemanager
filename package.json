@@ -1,16 +1,16 @@
 {
-  "name": "cn.com.ths.device.manager",
-  "version": "1.0.0",
+  "name": "cordova-plugin-ths-devicemanager",
+  "version": "1.0.1",
   "description": "思路移动管理平台设备管理插件",
   "cordova": {
-    "id": "cn.com.ths.device.manager",
+    "id": "cordova-plugin-ths-devicemanager",
     "platforms": [
       "android"
     ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/THS-FE/thsdevicemanager.git"
+    "url": "git+https://github.com/THS-FE/cordova-plugin-ths-devicemanager.git"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -19,7 +19,7 @@
   "author": "liuyx",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/THS-FE/thsdevicemanager/issues"
+    "url": "https://github.com/THS-FE/cordova-plugin-ths-devicemanager/issues"
   },
-  "homepage": "https://github.com/THS-FE/thsdevicemanager#readme"
+  "homepage": "https://github.com/THS-FE/cordova-plugin-ths-devicemanager#readme"
 }
