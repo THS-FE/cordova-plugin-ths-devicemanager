@@ -30,6 +30,7 @@
         android:protectionLevel="signature" ></permission>
         </config-file>
         <source-file src="src/android/ThsDeviceManager.java" target-dir="src/cn/com/ths/device/manager/ThsDeviceManager" />
+        <source-file src="src/android/MainApplication.java" target-dir="src/cn/com/ths/device/manager" />
         <source-file src="src/android/devicem.aar" target-dir="libs" />
         <source-file src="src/android/dpmapp.aar" target-dir="libs" />
         <source-file src="src/android/patternlocker.aar" target-dir="libs" />
