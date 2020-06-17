@@ -15,6 +15,13 @@ cordova plugin add https://github.com/THS-FE/cordova-plugin-ths-devicemanager  -
 cordova plugin add 文件路径
 ```
 
+参数说明：
+
+1. BD_AK 百度定位安卓SDK 注册的AK
+2. HMS_APPID 华为云注册的appID,用于华为推送
+3. ALIBABA_APPKEY 阿里云推送 APP KEY
+4. ALIBABA_APPSECRET  阿里云推送  应用密钥
+
 **说明： ionic 项目命令前加上ionic，即ionic cordova plugin xxxxx**
 
 ## 配置文件修改

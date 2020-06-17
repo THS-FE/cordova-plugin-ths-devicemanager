@@ -127,6 +127,13 @@ exports.veryPwd = function(success, error){
     exec(success, error, 'ThsDeviceManager', 'veryPwd', []);
 };
 
+/**
+ * 关闭验证手势密码
+ */
+exports.closeActivity = function(success, error){
+    exec(success, error, 'ThsDeviceManager', 'closeActivity', []);
+};
+
 // 监听验证手势密码回调
 exports.onVeryPwdInAndroidCallback = function(data) {
    data = JSON.stringify(data);

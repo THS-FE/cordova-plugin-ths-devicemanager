@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-ths-devicemanager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "思路移动管理平台设备管理插件",
   "cordova": {
     "id": "cordova-plugin-ths-devicemanager",

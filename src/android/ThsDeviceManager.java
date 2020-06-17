@@ -153,6 +153,9 @@ public class ThsDeviceManager extends CordovaPlugin {
         } else if (action.equals("veryPwd")) { // 验证手势密码
             context.startActivity(new Intent(context, WholePatternCheckingActivity.class));
             return true;
+        }else if (action.equals("closeActivity")) { // 关闭验证activity 
+            WholePatternCheckingActivity.Companion.finishActivity();
+            return true;
         } else if (action.equals("qrCodeLogin")) { // 二维码验证登录
             String loginName = args.getString(0); // 用户
             String password = args.getString(1); // 密码
