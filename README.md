@@ -30,7 +30,7 @@ cordova plugin add 文件路径
 
 ````xml
 <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:name="cn.com.ths.patternlocker.MainApplication" />
+            <application android:name="cn.com.ths.device.manager.MainApplication" />
 </edit-config>
 ````
 
@@ -86,7 +86,7 @@ document.addEventListener('thsPatternLocker.onSetPwdReceiver', data => {
 }, false);
 ```
 
-**说明：使用ts 进行开发时，需要在文件上变声明下declare let cordova，不然会报错;**
+**说明：使用ts 进行开发时，需要在文件上变声明下declare const cordova，不然会报错;**
 
 ```typescript
 import { Component, OnInit, Input } from '@angular/core';
@@ -114,3 +114,5 @@ Execution failed for task ':app:mergeDebugResources'.
 ```xml
 <widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
 ```
+
+与百度定位插件冲突
