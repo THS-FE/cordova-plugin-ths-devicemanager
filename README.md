@@ -71,7 +71,93 @@ private static final String[] MODULESLIST =
     });
 ```
 
+##### 设置用户信息
 
+```javascript
+const user = {
+      loginName: 'lijxa',
+      password: '1'
+    };
+    cordova.plugins.thsdevicemanager.setUser(user, (res) => {
+      console.log('成功');
+      alert(res);
+    }, (err) => {
+      console.log(err);
+    });
+```
+
+##### 启动服务
+
+```javascript
+cordova.plugins.thsdevicemanager.startService((res) => {
+      console.log('成功');
+      alert(res);
+    }, (err) => {
+      console.log(err);
+ });
+```
+
+##### 启用设备管理器
+
+```javascript
+cordova.plugins.thsdevicemanager.enableDeviceManager((res) => {
+      console.log('成功');
+      alert(res);
+ // 上报设备管理器状态     cordova.plugins.thsdevicemanager.updateDeviceActiveStatus((success) => {
+        console.log(success);
+      }, (error) => {
+        console.log(error);
+      });
+    }, (err) => {
+      console.log(err);
+    });
+```
+
+##### 取消设备管理器
+
+```javascript
+cordova.plugins.thsdevicemanager.disableDeviceManager((res) => {
+      console.log('成功');
+      alert(res);
+  // 上报设备管理器状态       cordova.plugins.thsdevicemanager.updateDeviceActiveStatus((success) => {
+        console.log(success);
+      }, (error) => {
+        console.log(error);
+      });
+    }, (err) => {
+      console.log(err);
+    });
+```
+
+##### 获取设备信息
+
+```javascript
+cordova.plugins.thsdevicemanager.getDeviceInfo((success) => {
+      console.log(success);
+    }, (error) => {
+      console.log(error);
+    });
+```
+
+##### 验证app完整性
+
+```javascript
+cordova.plugins.thsdevicemanager.verifyApp((success) => {
+      console.log(success);
+    }, (error) => {
+      console.log(error);
+});
+```
+
+##### 定位
+
+```javascript
+cordova.plugins.thsdevicemanager.startLoc((success) => {
+      console.log(success);
+    }, (error) => {
+      console.log(error);
+});
+```
 
 ##### 设置手势密码
 
@@ -110,6 +196,28 @@ document.addEventListener('thsPatternLocker.onSetPwdReceiver', data => {
       alert(JSON.stringify(data));
 }, false);
 ```
+
+##### 上传设备信息
+
+```javascript
+ cordova.plugins.thsdevicemanager.upLoadDeviceInfo((success) => {
+      console.log(success);
+    }, (error) => {
+      console.log(error);
+    });
+```
+
+##### 加密文件
+
+TODO
+
+##### 解密文件
+
+TODO
+
+##### 二维码登录
+
+TODO
 
 **说明：使用ts 进行开发时，需要在文件上变声明下declare const cordova，不然会报错;**
 
