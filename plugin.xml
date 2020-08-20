@@ -37,7 +37,7 @@
         <framework custom="true" src="src/android/thsDeviceManager.gradle" type="gradleReference" />
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <!--请填写你自己的 百度定位SDK api key -->
-            <!-- <meta-data android:name="com.baidu.lbsapi.API_KEY" tools:replace="android:value" android:value="$BD_AK"/> -->
+            <meta-data android:name="com.baidu.lbsapi.API_KEY"  android:value="$BD_AK"/> 
             <meta-data android:name="com.huawei.hms.client.appid" android:value="appid=$HMS_APPID" />
             <!-- 请填写你自己的- appKey -->
             <meta-data android:name="com.alibaba.app.appkey" android:value="$ALIBABA_APPKEY" />

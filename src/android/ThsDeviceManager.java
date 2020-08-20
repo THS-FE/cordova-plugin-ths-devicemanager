@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.util.Log;
 
 import com.baidu.location.BDLocation;
 import com.github.ihsg.demo.ui.whole.WholePatternCheckingActivity;
@@ -42,16 +43,16 @@ public class ThsDeviceManager extends CordovaPlugin {
     private Context context;
     private String encryptFileKey = "solutionsolution"; //加密的key
     private DeviceManger deviceManger;
-    private final String INIT_UPLOAD_DEVICE_INFO_KEY = "UPLOAD_DEVICE_INFO"; // 上传设备信息
-    private final String INIT_UPLOAD_NOTICE_RECEIVE_KEY = "UPLOAD_NOTICE_RECEIVE"; // 上传设备远程控制指令下发状态服务地址
-    private final String INIT_UPLOAD_LOCATION_KEY = "UPLOAD_LOCATION";// 上传设备位置信息
-    private final String INIT_GET_STRATEGY_KEY = "GET_STRATEGY";// 获取策略信息
-    private final String INIT_EQUIP_ACTIVE_KEY = "EQUIP_ACTIVE";// 上传设备管理器激活状态
-    private final String INIT_UPLOAD_EVENT_KEY = "UPLOAD_EVENT";// 上传事件
-    private final String INIT_EFENCECONFIG_EVENT_KEY = "EFENCECONFIG_EVENT";// 获取地理围栏信息
-    private final String INIT_VALIDATE_APP_CODE_KEY = "VALIDATE_APP_CODE";// 验证App 是否完整
-    private final String INIT_UPLOAD_EFENCETRIGGER_INFO_KEY = "UPLOAD_EFENCETRIGGER_INFO";// 触发围栏报警信息到服务器端
-    private final String INIT_QR_CODE_LOGIN_KEY = "QR_CODE_LOGIN";// 扫描二维码登录
+    private final String INIT_UPLOAD_DEVICE_INFO_URL = "Equipment/api/login.vm"; // 上传设备信息
+    private final String INIT_UPLOAD_NOTICE_RECEIVE_URL = "Equipment/api/uploadNoticeReceive.vm"; // 上传设备远程控制指令下发状态服务地址
+    private final String INIT_UPLOAD_LOCATION_URL = "app/upLocInfo.vm";// 上传设备位置信息
+    private final String INIT_GET_STRATEGY_URL = "Equipment/api/strategy.vm";// 获取策略信息
+    private final String INIT_EQUIP_ACTIVE_URL = "Equipment/api/equipActive.vm";// 上传设备管理器激活状态
+    private final String INIT_UPLOAD_EVENT_URL = "warning/api/uploadEvent.vm";// 上传事件
+    private final String INIT_EFENCECONFIG_EVENT_URL = "Equipment/api/getEfenceConfig.vm";// 获取地理围栏信息
+    private final String INIT_VALIDATE_APP_CODE_URL = "app/validateAppCode.vm";// 验证App 是否完整
+    private final String INIT_UPLOAD_EFENCETRIGGER_INFO_URL = "Equipment/api/uploadEfenceTriggerInfo.vm";// 触发围栏报警信息到服务器端
+    private final String INIT_QR_CODE_LOGIN_URL = "Equipment/api/qrcodeLogin.vm";// 扫描二维码登录
     private final String INIT_LOGINNAME_KEY = "loginName";// 用户名
     private final String INIT_PASSWORD_KEY = "password";// 密码
     public  String MY_BDR_ACTION = "cn.com.ths.mybroadcastreceiver.action";
@@ -83,8 +84,8 @@ public class ThsDeviceManager extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("init")) {// 初始化配置，主要是信息上报地址等
-            String configStr = args.getString(0);
-            this.init(configStr, callbackContext);
+            String baseUrl = args.getString(0);
+            this.init(baseUrl, callbackContext);
             return true;
         } else if (action.equals("setUser")) { // 设置用户信息
             String user = args.getString(0);
@@ -114,7 +115,63 @@ public class ThsDeviceManager extends CordovaPlugin {
                 @Override
                 public void getLocation(BDLocation location) {
 //                    Log.e("locationManager", location.toString());
-                    callbackContext.success(location.toString());
+                    if (location == null) {
+                        return;
+                    }
+                    Log.e("locationManager", location.toString());
+                    try {
+                        JSONObject locationInfo = new JSONObject();
+                        locationInfo.put("time", location.getTime());
+                        locationInfo.put("locType", location.getLocType());
+                        locationInfo.put("latitude", location.getLatitude());
+                        locationInfo.put("longitude", location.getLongitude());
+                        locationInfo.put("radius", location.getRadius());
+                        locationInfo.put("coorType",location.getCoorType()); // 获取所用坐标系，坐标系为准(wgs84,gcj02,bd09,bd09ll)
+                        if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
+                            locationInfo.put("speed", location.getSpeed());// 单位：公里每小时
+                            locationInfo
+                                    .put("satellite", location.getSatelliteNumber());
+                            locationInfo.put("height", location.getAltitude());// 单位：米
+                            locationInfo.put("direction", location.getDirection());// 单位：度
+                            locationInfo.put("addr", location.getAddrStr());
+                            locationInfo.put("province", location.getProvince());
+                            locationInfo.put("city", location.getCity());
+                            locationInfo.put("district", location.getDistrict());
+                            locationInfo.put("street", location.getStreet());
+                            locationInfo.put("describe", "gps定位成功");
+                        } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
+                            locationInfo.put("addr", location.getAddrStr());
+                            locationInfo.put("province", location.getProvince());
+                            locationInfo.put("city", location.getCity());
+                            locationInfo.put("district", location.getDistrict());
+                            locationInfo.put("street", location.getStreet());
+                            // 运营商信息
+                            locationInfo.put("operationers", location.getOperators());
+                            locationInfo.put("describe", "网络定位成功");
+                        } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
+                            locationInfo.put("describe", "离线定位成功，离线定位结果也是有效的");
+                        } else if (location.getLocType() == BDLocation.TypeServerError) {
+                            locationInfo
+                                    .put("describe",
+                                            "服务端网络定位失败，可以反馈IMEI号和大体定位时间到loc-bugs@baidu.com，会有人追查原因");
+                        } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
+                            locationInfo.put("describe", "网络不通导致定位失败，请检查网络是否通畅");
+                        } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
+                            locationInfo
+                                    .put("describe",
+                                            "无法获取有效定位依据导致定位失败，一般是由于手机的原因，处于飞行模式下一般会造成这种结果，可以试着重启手机");
+                        }
+                        locationInfo.put("locationdescribe",
+                                location.getLocationDescribe());// 位置语义化信息
+                        callbackContext.success(locationInfo); // 每调用一次，该方法前端只能执行一次
+
+                        // 发送位置数据变更
+                        // sendMsg(locationInfo.toString(),"onReceiveLocation");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        callbackContext.error(e.toString());
+                    }
+
                 }
             });
             return true;
@@ -205,7 +262,7 @@ public class ThsDeviceManager extends CordovaPlugin {
     /**
      * 配置app 所需要的服务地址信息，该方法需要在app启动最开始就调用
      *
-     * @param configStr       配置信息JSON字符串
+     * @param baseUrl       配置基础的URL地址
      *                        {
      *                        "UPLOAD_DEVICE_INFO":"上传设备信息地址",
      *                        "UPLOAD_NOTICE_RECEIVE":"上传设备远程控制质量下发状态服务地址",
@@ -220,30 +277,50 @@ public class ThsDeviceManager extends CordovaPlugin {
      *                        }
      * @param callbackContext 回调
      */
-    private void init(String configStr, CallbackContext callbackContext) {
-        if (configStr != null && configStr.length() > 0) {
-            try {
-                JSONObject jsonObject = new JSONObject(configStr);
+    private void init(String baseUrl, CallbackContext callbackContext) {
+        if (baseUrl != null && baseUrl.length() > 0) {
+//            try {
+//                JSONObject jsonObject = new JSONObject(configStr);
+//                // 上传设备信息地址
+//                Server.UPLOAD_DEVICE_INFO = jsonObject.getString(INIT_UPLOAD_DEVICE_INFO_KEY);
+//                //  上传设备远程控制指令下发状态服务地址
+//                Server.UPLOAD_NOTICE_RECEIVE = jsonObject.getString(INIT_UPLOAD_NOTICE_RECEIVE_KEY);
+//                // 上传设备位置信息
+//                Server.UPLOAD_LOCATION = jsonObject.getString(INIT_UPLOAD_LOCATION_KEY);
+//                //  获取策略信息
+//                Server.GET_STRATEGY = jsonObject.getString(INIT_GET_STRATEGY_KEY);
+//                //  上传设备管理器激活状态
+//                Server.EQUIP_ACTIVE = jsonObject.getString(INIT_EQUIP_ACTIVE_KEY);
+//                // 上传事件
+//                Server.UPLOAD_EVENT = jsonObject.getString(INIT_UPLOAD_EVENT_KEY);
+//                // 获取地理围栏信息
+//                Server.EFENCECONFIG_EVENT = jsonObject.getString(INIT_EFENCECONFIG_EVENT_KEY);
+//                // 验证App 是否完整
+//                Server.VALIDATE_APP_CODE = jsonObject.getString(INIT_VALIDATE_APP_CODE_KEY);
+//                // 触发围栏报警信息到服务器端
+//                Server.UPLOAD_EFENCETRIGGER_INFO = jsonObject.getString(INIT_UPLOAD_EFENCETRIGGER_INFO_KEY);
+//                //扫描二维码登录
+//                Server.QR_CODE_LOGIN = jsonObject.getString(INIT_QR_CODE_LOGIN_KEY);
                 // 上传设备信息地址
-                Server.UPLOAD_DEVICE_INFO = jsonObject.getString(INIT_UPLOAD_DEVICE_INFO_KEY);
+                Server.UPLOAD_DEVICE_INFO = baseUrl+INIT_UPLOAD_DEVICE_INFO_URL;
                 //  上传设备远程控制指令下发状态服务地址
-                Server.UPLOAD_NOTICE_RECEIVE = jsonObject.getString(INIT_UPLOAD_NOTICE_RECEIVE_KEY);
+                Server.UPLOAD_NOTICE_RECEIVE = baseUrl+INIT_UPLOAD_NOTICE_RECEIVE_URL;
                 // 上传设备位置信息
-                Server.UPLOAD_LOCATION = jsonObject.getString(INIT_UPLOAD_LOCATION_KEY);
+                Server.UPLOAD_LOCATION = baseUrl+INIT_UPLOAD_LOCATION_URL;
                 //  获取策略信息
-                Server.GET_STRATEGY = jsonObject.getString(INIT_GET_STRATEGY_KEY);
+                Server.GET_STRATEGY = baseUrl+INIT_GET_STRATEGY_URL;
                 //  上传设备管理器激活状态
-                Server.EQUIP_ACTIVE = jsonObject.getString(INIT_EQUIP_ACTIVE_KEY);
+                Server.EQUIP_ACTIVE = baseUrl+INIT_EQUIP_ACTIVE_URL;
                 // 上传事件
-                Server.UPLOAD_EVENT = jsonObject.getString(INIT_UPLOAD_EVENT_KEY);
+                Server.UPLOAD_EVENT = baseUrl+INIT_UPLOAD_EVENT_URL;
                 // 获取地理围栏信息
-                Server.EFENCECONFIG_EVENT = jsonObject.getString(INIT_EFENCECONFIG_EVENT_KEY);
+                Server.EFENCECONFIG_EVENT = baseUrl+INIT_EFENCECONFIG_EVENT_URL;
                 // 验证App 是否完整
-                Server.VALIDATE_APP_CODE = jsonObject.getString(INIT_VALIDATE_APP_CODE_KEY);
+                Server.VALIDATE_APP_CODE = baseUrl+INIT_VALIDATE_APP_CODE_URL;
                 // 触发围栏报警信息到服务器端
-                Server.UPLOAD_EFENCETRIGGER_INFO = jsonObject.getString(INIT_UPLOAD_EFENCETRIGGER_INFO_KEY);
+                Server.UPLOAD_EFENCETRIGGER_INFO = baseUrl+INIT_UPLOAD_EFENCETRIGGER_INFO_URL;
                 //扫描二维码登录
-                Server.QR_CODE_LOGIN = jsonObject.getString(INIT_QR_CODE_LOGIN_KEY);
+                Server.QR_CODE_LOGIN = baseUrl+INIT_QR_CODE_LOGIN_URL;
 //                Server.UPLOAD_DEVICE_INFO = "http://192.168.0.101:8084/ths-move/Equipment/api/login.vm";
 //                Server.UPLOAD_NOTICE_RECEIVE = "http://192.168.0.101:8084/ths-move/Equipment/api/uploadNoticeReceive.vm";
 //                Server.UPLOAD_LOCATION = "http://192.168.0.101:8084/ths-move/app/upLocInfo.vm";
@@ -252,11 +329,11 @@ public class ThsDeviceManager extends CordovaPlugin {
 //                Server.UPLOAD_EVENT = "http://192.168.0.101:8084/ths-move/warning/api/uploadEvent.vm";
 //                Server.EFENCECONFIG_EVENT = "http://192.168.0.101:8084/ths-move/Equipment/api/getEfenceConfig.vm";
 //                Server.VALIDATE_APP_CODE = "http://192.168.0.101:8084/ths-move/app/validateAppCode.vm";
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
 
-            callbackContext.success(configStr);
+            callbackContext.success(baseUrl);
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }

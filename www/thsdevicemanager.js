@@ -1,22 +1,10 @@
 var exec = require('cordova/exec');
 /**
  * 初始化 
- * @param config 服务地址等信息
- * {
-	"UPLOAD_DEVICE_INFO":"上传设备信息地址",
-	"UPLOAD_NOTICE_RECEIVE":"上传设备远程控制质量下发状态服务地址",
-	"UPLOAD_LOCATION":"上传设备位置信息地址",
-	"GET_STRATEGY":"获取设备策略信息地址",
-	"EQUIP_ACTIVE":"上传设备管理器激活状态地址",
-	"UPLOAD_EVENT":"上传事件地址",
-	"EFENCECONFIG_EVENT":"获取地理围栏信息地址",
-	"VALIDATE_APP_CODE":"验证App 是否完整地址",
-	"UPLOAD_EFENCETRIGGER_INFO":"触发围栏报警信息到服务器端地址",
-	"QR_CODE_LOGIN":"扫描二维码登录",
-	}
+ * @param baseUrl 服务地址等信息 例：http://192.168.0.101:8084/ths-move/
  */
-exports.init = function (config, success, error) {
-    exec(success, error, 'ThsDeviceManager', 'init', [config]);
+exports.init = function (baseUrl, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'init', [baseUrl]);
 };
 
 /**
