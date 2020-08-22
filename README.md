@@ -182,7 +182,7 @@ cordova.plugins.thsdevicemanager.veryPwd((success) => {
 ##### 监测手势密码设置成功(一般放在页面初始化位置)
 
 ```javascript
-document.addEventListener('thsPatternLocker.onVeryPwdReceiver', data => {
+document.addEventListener('thsDeviceManager.onVeryPwdReceiver', data => {
       console.log(data);
       alert(JSON.stringify(data));
 }, false);
@@ -191,7 +191,7 @@ document.addEventListener('thsPatternLocker.onVeryPwdReceiver', data => {
 ##### 监听手势密码验证成功（一般放在页面初始化位置）
 
 ```javascript
-document.addEventListener('thsPatternLocker.onSetPwdReceiver', data => {
+document.addEventListener('thsDeviceManager.onSetPwdReceiver', data => {
       console.log(data);
       alert(JSON.stringify(data));
 }, false);
