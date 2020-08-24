@@ -24,6 +24,7 @@
         <config-file parent="/*" target="AndroidManifest.xml">
                <!--添加使用自定义广播权限-->
             <uses-permission android:name="cn.com.ths.mybroadcastreceiver.permission" />
+            
             <!--自定义权限广播-->
             <permission
         android:name="cn.com.ths.mybroadcastreceiver.permission"
@@ -43,7 +44,8 @@
             <meta-data android:name="com.alibaba.app.appkey" android:value="$ALIBABA_APPKEY" />
             <!-- 请填写你自己的appSecret -->
             <meta-data android:name="com.alibaba.app.appsecret" android:value="$ALIBABA_APPSECRET" />
-     
+            <!--修复解决Failed resolution of: Lorg/apache/http/params/BasicHttpParams;-->
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
         </config-file>
     </platform>
 </plugin>
