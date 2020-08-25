@@ -8,11 +8,11 @@ Android
 
 ```
 # 通过npm 安装插件
-cordova plugin add cordova-plugin-ths-devicemanager --variable BD_AK=cU0kobAWaMKvarnVFYaDq --variable HMS_APPID=1212121 --variable ALIBABA_APPKEY=1212121 --variable ALIBABA_APPSECRET=cccsasas
+ionic cordova plugin add cordova-plugin-ths-devicemanager --variable BD_AK=cU0kobAWaMKvarnVFYaDq --variable HMS_APPID=1212121 --variable ALIBABA_APPKEY=1212121 --variable ALIBABA_APPSECRET=cccsasas
 # 通过github安装
-cordova plugin add https://github.com/THS-FE/cordova-plugin-ths-devicemanager  --variable BD_AK=cU0kobAWaMKvarnVFYaDq --variable HMS_APPID=1212121 --variable ALIBABA_APPKEY=1212121 --variable ALIBABA_APPSECRET=cccsasas
+ionic cordova plugin add https://github.com/THS-FE/cordova-plugin-ths-devicemanager  --variable BD_AK=cU0kobAWaMKvarnVFYaDq --variable HMS_APPID=1212121 --variable ALIBABA_APPKEY=1212121 --variable ALIBABA_APPSECRET=cccsasas
 # 通过本地文件路径安装
-cordova plugin add 文件路径
+ionic cordova plugin add 文件路径
 ```
 
 参数说明：

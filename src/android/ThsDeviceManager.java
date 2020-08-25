@@ -33,6 +33,7 @@ import cn.com.ths.trustmobi.safe.utils.http.ThsHttpClient;
 import cn.com.ths.trustmobi.safe.utils.json.JsonUtils;
 import cn.com.ths.trustmobi.safe.utils.loc.LocationManager;
 import cn.com.ths.trustmobi.safe.utils.log.LogUtil;
+import cn.com.ths.trustmobi.safe.utils.storage.PreferenceManager;
 import cn.com.ths.trustmobi.safe.utils.sys.DeviceInfo;
 import cn.com.ths.trustmobi.safe.utils.sys.DeviceInfoUtil;
 
@@ -302,6 +303,8 @@ public class ThsDeviceManager extends CordovaPlugin {
 //                //扫描二维码登录
 //                Server.QR_CODE_LOGIN = jsonObject.getString(INIT_QR_CODE_LOGIN_KEY);
                 // 上传设备信息地址
+                // 缓存基础路径地址
+                PreferenceManager.getInstance().setBaseUrl(baseUrl);
                 Server.UPLOAD_DEVICE_INFO = baseUrl+INIT_UPLOAD_DEVICE_INFO_URL;
                 //  上传设备远程控制指令下发状态服务地址
                 Server.UPLOAD_NOTICE_RECEIVE = baseUrl+INIT_UPLOAD_NOTICE_RECEIVE_URL;
@@ -351,6 +354,9 @@ public class ThsDeviceManager extends CordovaPlugin {
                 JSONObject jsonObject = new JSONObject(userStr);
                 AppCache.loginName = jsonObject.getString(INIT_LOGINNAME_KEY);
                 AppCache.password = jsonObject.getString(INIT_PASSWORD_KEY);
+                // 缓存用户信息
+                PreferenceManager.getInstance().setPassword(AppCache.password);
+                PreferenceManager.getInstance().setLoginName(AppCache.loginName);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
