@@ -26,6 +26,7 @@ import cn.com.ths.trustmobi.safe.config.AppCache;
 import cn.com.ths.trustmobi.safe.config.Server;
 import cn.com.ths.trustmobi.safe.push.service.MsgService;
 import cn.com.ths.trustmobi.safe.utils.encrypt.AESUtils;
+import cn.com.ths.trustmobi.safe.utils.encrypt.AESUtils2;
 import cn.com.ths.trustmobi.safe.utils.file.FileUtil;
 import cn.com.ths.trustmobi.safe.utils.file.ValidateSha1sum;
 import cn.com.ths.trustmobi.safe.utils.http.ThsClient;
@@ -198,6 +199,18 @@ public class ThsDeviceManager extends CordovaPlugin {
             // 将解密后的文件，恢复到原来的路径
             FileUtil.bytes2File(decryptFileByte, filePath);
             callbackContext.success(filePath);
+            return true;
+        }else if (action.equals("decryptionStr")) { // 解密字符串
+            // 待解密的字符串
+            String decryptionStr = args.getString(0);
+            String content = AESUtils2.decode(decryptionStr);
+            callbackContext.success(content);
+            return true;
+        }else if (action.equals("encryptStr")) { //加密字符串
+            // 待加密的字符串
+            String encryptStr = args.getString(0);
+            String content = AESUtils2.encode(encryptStr);
+            callbackContext.success(content);
             return true;
         } else if (action.equals("enableDeviceManager")) { // 激活设备管理器
             deviceManger.enableDeviceManager();

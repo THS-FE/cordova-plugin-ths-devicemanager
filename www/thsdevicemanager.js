@@ -75,16 +75,32 @@ exports.startLoc = function (success, error) {
  * 加密文件，
  * 返回加密后的文件路径
  */
-exports.encryptFile = function (filePath,outFilePath,success, error) {
-    exec(success, error, 'ThsDeviceManager', 'encryptFile', [filePath,outFilePath]);
+exports.encryptFile = function (filePath, outFilePath, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'encryptFile', [filePath, outFilePath]);
 };
 
 /**
  * 解密文件
  * 返回解密后的文件路径
  */
-exports.decryptionFile = function (filePath,outFilePath,success, error) {
-    exec(success, error, 'ThsDeviceManager', 'decryptionFile', [filePath,outFilePath]);
+exports.decryptionFile = function (filePath, outFilePath, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'decryptionFile', [filePath, outFilePath]);
+};
+
+/**
+ * 加密文本，
+ * 返回加密后的文本
+ */
+exports.encryptStr = function (content, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'encryptStr', [content]);
+};
+
+/**
+ * 解密文本
+ * 返回解密后的文本路径
+ */
+exports.decryptionStr = function (content, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'decryptionStr', [content]);
 };
 
 /**
@@ -104,36 +120,36 @@ exports.disableDeviceManager = function (success, error) {
 /**
  * 设置手势密码
  */
-exports.setPwd = function(success, error){
+exports.setPwd = function (success, error) {
     exec(success, error, 'ThsDeviceManager', 'setPwd', []);
 };
 
 /**
  * 验证手势密码
  */
-exports.veryPwd = function(success, error){
+exports.veryPwd = function (success, error) {
     exec(success, error, 'ThsDeviceManager', 'veryPwd', []);
 };
 
 /**
  * 关闭验证手势密码
  */
-exports.closeActivity = function(success, error){
+exports.closeActivity = function (success, error) {
     exec(success, error, 'ThsDeviceManager', 'closeActivity', []);
 };
 
 // 监听验证手势密码回调
-exports.onVeryPwdInAndroidCallback = function(data) {
-   data = JSON.stringify(data);
-   data = JSON.parse(data);
-   cordova.fireDocumentEvent('thsDeviceManager.onVeryPwdReceiver', data);
+exports.onVeryPwdInAndroidCallback = function (data) {
+    data = JSON.stringify(data);
+    data = JSON.parse(data);
+    cordova.fireDocumentEvent('thsDeviceManager.onVeryPwdReceiver', data);
 };
 
 // 监听设置手势密码回调
-exports.onSetPwdInAndroidCallback = function(data) {
-   data = JSON.stringify(data);
-   data = JSON.parse(data);
-   cordova.fireDocumentEvent('thsDeviceManager.onSetPwdReceiver', data);
+exports.onSetPwdInAndroidCallback = function (data) {
+    data = JSON.stringify(data);
+    data = JSON.parse(data);
+    cordova.fireDocumentEvent('thsDeviceManager.onSetPwdReceiver', data);
 };
 
 /**
@@ -142,8 +158,8 @@ exports.onSetPwdInAndroidCallback = function(data) {
  * @param password 登录密码
  * @param token 扫描二维码token
  */
-exports.qrCodeLogin = function(loginName,password,token,success, error){
-    exec(success, error, 'ThsDeviceManager', 'qrCodeLogin', [loginName,password,token]);
+exports.qrCodeLogin = function (loginName, password, token, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'qrCodeLogin', [loginName, password, token]);
 }
 
 
