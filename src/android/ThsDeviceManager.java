@@ -52,7 +52,7 @@ public class ThsDeviceManager extends CordovaPlugin {
     private final String INIT_EQUIP_ACTIVE_URL = "Equipment/api/equipActive.vm";// 上传设备管理器激活状态
     private final String INIT_UPLOAD_EVENT_URL = "warning/api/uploadEvent.vm";// 上传事件
     private final String INIT_EFENCECONFIG_EVENT_URL = "Equipment/api/getEfenceConfig.vm";// 获取地理围栏信息
-    private final String INIT_VALIDATE_APP_CODE_URL = "app/validateAppCode.vm";// 验证App 是否完整
+    private final String INIT_VALIDATE_APP_CODE_URL = "app/api/validateAppCode.vm";// 验证App 是否完整
     private final String INIT_UPLOAD_EFENCETRIGGER_INFO_URL = "Equipment/api/uploadEfenceTriggerInfo.vm";// 触发围栏报警信息到服务器端
     private final String INIT_QR_CODE_LOGIN_URL = "Equipment/api/qrcodeLogin.vm";// 扫描二维码登录
     private final String INIT_LOGINNAME_KEY = "loginName";// 用户名
@@ -213,7 +213,10 @@ public class ThsDeviceManager extends CordovaPlugin {
             callbackContext.success(content);
             return true;
         } else if (action.equals("enableDeviceManager")) { // 激活设备管理器
-            deviceManger.enableDeviceManager();
+            boolean isActive = deviceManger.getActiveState();
+            if(!isActive){ // 检测到没有激活，进行激活操作
+                deviceManger.enableDeviceManager();
+            }
             return true;
         } else if (action.equals("disableDeviceManager")) { // 取消设备管理器
             deviceManger.disableDeviceManager();
