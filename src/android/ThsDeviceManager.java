@@ -1,27 +1,26 @@
 package cn.com.ths.device.manager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
-
 import com.baidu.location.BDLocation;
 import com.github.ihsg.demo.ui.whole.WholePatternCheckingActivity;
 import com.github.ihsg.demo.ui.whole.WholePatternSettingActivity;
 import com.trustmobi.devicem.DeviceManger;
-
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PermissionHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import cn.com.ths.trustmobi.safe.activity.TestActivity;
 import cn.com.ths.trustmobi.safe.config.AppCache;
 import cn.com.ths.trustmobi.safe.config.Server;
 import cn.com.ths.trustmobi.safe.push.service.MsgService;
@@ -30,7 +29,6 @@ import cn.com.ths.trustmobi.safe.utils.encrypt.AESUtils2;
 import cn.com.ths.trustmobi.safe.utils.file.FileUtil;
 import cn.com.ths.trustmobi.safe.utils.file.ValidateSha1sum;
 import cn.com.ths.trustmobi.safe.utils.http.ThsClient;
-import cn.com.ths.trustmobi.safe.utils.http.ThsHttpClient;
 import cn.com.ths.trustmobi.safe.utils.json.JsonUtils;
 import cn.com.ths.trustmobi.safe.utils.loc.LocationManager;
 import cn.com.ths.trustmobi.safe.utils.log.LogUtil;
@@ -66,6 +64,14 @@ public class ThsDeviceManager extends CordovaPlugin {
         instance = this;
     }
     /**
+     * 权限列表
+     */
+    private String[] locPerArr = new String[] {
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+    /**
      * 初始化插件
      *
      * @param cordova
@@ -81,6 +87,34 @@ public class ThsDeviceManager extends CordovaPlugin {
         myBroadcastReceiver = new MyBroadcastReceiver();
         //注册receiver时，指定发送者的权限，不然外部应用可以收到receiver
         this.context.registerReceiver(myBroadcastReceiver, intentFilter,MY_BDR_PERMISSION,null);
+        promtForLocation();
+    }
+
+    /**
+     * 申请权限
+     */
+    private void promtForLocation() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            for (int i = 0, len = locPerArr.length; i < len; i++) {
+                if (!PermissionHelper.hasPermission(this, locPerArr[i])) {
+                    PermissionHelper.requestPermission(this, i, locPerArr[i]);
+                    return;
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode,
+                                          String[] permissions, int[] grantResults) throws JSONException {
+        // TODO Auto-generated method stub
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_DENIED) {
+                return;
+            }
+        }
+        promtForLocation();
     }
 
     @Override
@@ -88,6 +122,7 @@ public class ThsDeviceManager extends CordovaPlugin {
         if (action.equals("init")) {// 初始化配置，主要是信息上报地址等
             String baseUrl = args.getString(0);
             this.init(baseUrl, callbackContext);
+            promtForLocation();
             return true;
         } else if (action.equals("setUser")) { // 设置用户信息
             String user = args.getString(0);

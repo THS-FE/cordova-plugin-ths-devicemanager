@@ -1,5 +1,4 @@
 package cn.com.ths.device.manager;
-
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,14 +6,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
-
 import com.alibaba.sdk.android.push.CloudPushService;
 import com.alibaba.sdk.android.push.CommonCallback;
 import com.alibaba.sdk.android.push.huawei.HuaWeiRegister;
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory;
 import com.alibaba.sdk.android.push.register.MiPushRegister;
 import com.github.ihsg.demo.IComponentApplication;
-
 import cn.com.ths.trustmobi.safe.config.AppCache;
 import cn.com.ths.trustmobi.safe.utils.http.ThsHttpClient;
 import cn.com.ths.trustmobi.safe.utils.loc.GeoFenceManager;
