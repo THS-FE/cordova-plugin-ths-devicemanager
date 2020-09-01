@@ -39,9 +39,9 @@ public class MainApplication extends Application {
             // 通知渠道的id
             String id = "ths";
             // 用户可以看到的通知渠道的名字.
-            CharSequence name = "notification channel";
+            CharSequence name = "您有新的消息";
             // 用户可以看到的通知渠道的描述
-            String description = "notification description";
+            String description = "点击打开应用";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel mChannel = new NotificationChannel(id, name, importance);
             // 配置通知渠道的属性
