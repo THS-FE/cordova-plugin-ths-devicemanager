@@ -88,19 +88,25 @@ exports.decryptionFile = function (filePath, outFilePath, success, error) {
 };
 
 /**
- * 加密文本，
- * 返回加密后的文本
+ * 加密文本
+ * @param {string} content 文本内容
+ * @param {string} keyStr 密钥
+ * @param {string} success 成功
+ * @param {string} error 失败
  */
-exports.encryptStr = function (content, success, error) {
-    exec(success, error, 'ThsDeviceManager', 'encryptStr', [content]);
+exports.encryptStr = function (content, keyStr, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'encryptStr', [content, keyStr]);
 };
 
 /**
  * 解密文本
- * 返回解密后的文本路径
+ * @param {*} content 文本内容
+ * @param {*} keyStr 密钥
+ * @param {*} success 成功
+ * @param {*} error 失败
  */
-exports.decryptionStr = function (content, success, error) {
-    exec(success, error, 'ThsDeviceManager', 'decryptionStr', [content]);
+exports.decryptionStr = function (content, keyStr, success, error) {
+    exec(success, error, 'ThsDeviceManager', 'decryptionStr', [content, keyStr]);
 };
 
 /**

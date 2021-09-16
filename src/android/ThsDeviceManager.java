@@ -13,9 +13,10 @@ import com.baidu.location.BDLocation;
 import com.github.ihsg.demo.ui.whole.WholePatternCheckingActivity;
 import com.github.ihsg.demo.ui.whole.WholePatternSettingActivity;
 import com.trustmobi.devicem.DeviceManger;
-import org.apache.cordova.CordovaInterface;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PermissionHelper;
 import org.json.JSONArray;
@@ -58,8 +59,8 @@ public class ThsDeviceManager extends CordovaPlugin {
     public  String MY_BDR_ACTION = "cn.com.ths.mybroadcastreceiver.action";
     public  String MY_BDR_PERMISSION = "cn.com.ths.mybroadcastreceiver.permission";
     private MyBroadcastReceiver myBroadcastReceiver;
-
     private  ThsDeviceManager instance;
+    private String ivStr = "solutionsolution"; //加密解密偏移量
     public ThsDeviceManager() {
         instance = this;
     }
@@ -238,13 +239,27 @@ public class ThsDeviceManager extends CordovaPlugin {
         }else if (action.equals("decryptionStr")) { // 解密字符串
             // 待解密的字符串
             String decryptionStr = args.getString(0);
-            String content = AESUtils2.decode(decryptionStr);
+            String keyStr = args.getString(1);
+            String content = null;
+            try {
+                content = AESUtils2.aesDecrypt(decryptionStr,keyStr,ivStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // String content = AESUtils2.decode(decryptionStr);
+            
             callbackContext.success(content);
             return true;
         }else if (action.equals("encryptStr")) { //加密字符串
             // 待加密的字符串
             String encryptStr = args.getString(0);
-            String content = AESUtils2.encode(encryptStr);
+            String keyStr = args.getString(1);
+            String content = null;
+            try {
+                content = AESUtils2.aesEncrypt(encryptStr,keyStr, ivStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             callbackContext.success(content);
             return true;
         } else if (action.equals("enableDeviceManager")) { // 激活设备管理器
